@@ -8,9 +8,14 @@
 int main() {
 	bool window = false;
 	bool screenToConsole = true;
+	bool testThreads = false;
 	
 	if (screenToConsole) {
 		ScreenMain();
+	}
+
+	if (testThreads) {
+		TestThreadsMain();
 	}
 
 	if (window) {
