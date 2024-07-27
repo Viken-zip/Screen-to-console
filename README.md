@@ -6,3 +6,4 @@ a small C program that takes a "screenshot" saves in memory and displays it in t
 it might might slow if you have font size in console really small.
 
 problems with diffrent monitors sizes will be fixed soon! (works best in 1440p).
+memory leak and other problems are still there in this version...
