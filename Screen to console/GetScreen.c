@@ -67,6 +67,12 @@ void getConsoleDimensions(int* width, int* height) {
     *height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 }
 
+void getMonitorResolution(int* width, int* height) {
+    //why dose this have a seperate function? ehh maybe somthing needs to bee added soon who knows
+    *width = GetSystemMetrics(SM_CXSCREEN);
+    *height = GetSystemMetrics(SM_CYSCREEN);
+}
+
 void AccessBitmapData(HBITMAP hBitmap) {
     BITMAP bmp;
     BITMAPINFO bi;
@@ -131,7 +137,12 @@ void AccessBitmapData(HBITMAP hBitmap) {
 
         // this could be made faster i bet
         for (int i = 0; i < bmp.bmHeight; i++) {
-            printf("%s\n", dataArray[i].message);
+            if (i + 1 == bmp.bmHeight) {
+                printf("%s", dataArray[i].message);
+            }
+            else {
+                printf("%s\n", dataArray[i].message);
+            }
             free(dataArray[i].message);
             CloseHandle(threads[i]);
         }
@@ -155,8 +166,8 @@ void ScreenImage()
     HDC hDest = CreateCompatibleDC(hdc);
 
     // this is soo bad! we need to be able to check users primary monitor resolution!
-    int height = 1440;
-    int width = 2560;
+    int width, height;
+    getMonitorResolution(&width, &height);
 
     //make bitmap would maybe be better with png, but might slow the system down bc od convertion time
     HBITMAP hbDesktop = CreateCompatibleBitmap(hdc, width, height);
@@ -166,7 +177,6 @@ void ScreenImage()
 
     //scales bit map to fit console size
     int newWidth, newHeight;
-
     getConsoleDimensions(&newWidth, &newHeight);
 
     HBITMAP hbResized = CreateCompatibleBitmap(hdc, newWidth, newHeight);
