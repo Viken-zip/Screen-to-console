@@ -41,10 +41,11 @@ unsigned __stdcall threadBuildRow(void* parg) {
 
         snprintf(rowBuffer + strlen(rowBuffer), bufferSize - strlen(rowBuffer), "\x1b[38;2;%d;%d;%dm#\x1b[0m", red, green, blue);
     }
-    data->message = rowBuffer; //fk strncpy_s
+    //data->message = rowBuffer; //fk strncpy_s
+    strncpy_s(data->message, bufferSize, rowBuffer, bufferSize-1);
     data->message[bufferSize-1] = '\0';
 
-    //free(rowBuffer); breaks the darn thing >:(
+    free(rowBuffer); //breaks the darn thing >:(
     return 0;
 }
 
@@ -93,12 +94,17 @@ void AccessBitmapData(HBITMAP hBitmap) {
         HANDLE* threads = malloc(bmp.bmHeight * sizeof(HANDLE));
         if (threads == NULL) {
             perror("Failed to allocate memory for threads!");
+            free(pPixels);
+            ReleaseDC(NULL, hdcScreen);
             return 1;
         }
 
         ThreadData* dataArray = malloc(bmp.bmHeight * sizeof(ThreadData));
         if (dataArray == NULL) {
             perror("Failed to allocate memory for dataArray!");
+            free(threads);
+            free(pPixels);
+            ReleaseDC(NULL, hdcScreen);
             return 1;
         }
 
@@ -116,7 +122,7 @@ void AccessBitmapData(HBITMAP hBitmap) {
                 perror("Failed to create thread in thread loop!");
                 // Clean up resources here if needed
             }
-            //Sleep(1L); //if not work for some reason try adding this back
+            Sleep(1L); //if not work for some reason try adding this back
         }
 
         WaitForMultipleObjects(bmp.bmHeight, threads, TRUE, INFINITE);
